@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<!--
+    Dette forteller nettleseren at vi bruker HTML5.
+
+    HTML brukes til å lage STRUKTUREN på nettsiden.
+-->
+
+<html lang="no">
+
+<!--
+    <html> inneholder hele nettsiden.
+
+    lang="no" forteller nettleseren at nettsiden
+    hovedsakelig er skrevet på norsk.
+-->
+
+<head>
+
+    <!--
+        <head> inneholder informasjon OM nettsiden.
+
+        Det meste her vises ikke direkte på nettsiden.
+    -->
+
+    <meta charset="UTF-8">
+
+    <!--
+        UTF-8 gjør at vi kan bruke norske tegn som:
+
+        æ
+        ø
+        å
+    -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--
+        Denne gjør at nettsiden fungerer bedre på
+        mobiltelefoner og andre små skjermer.
+    -->
+
+    <title>Ryan Gosling</title>
+
+    <!--
+        <title> bestemmer teksten som vises
+        i fanen øverst i nettleseren.
+    -->
+
+
+    <!--
+        Her kobler vi HTML sammen med CSS.
+
+        HTML = struktur
+        CSS = design
+    -->
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <!--
+        ============================
+        NAVIGASJONSMENY
+        ============================
+
+        <nav> brukes til navigasjon.
+
+        Her lager vi lenker til de forskjellige
+        sidene på nettsiden.
+    -->
+
+    <nav class="navbar">
+
+        <!--
+            Dette er logoen/tittelen i menyen.
+        -->
+
+        <h2>Ryan Gosling</h2>
+
+
+        <!--
+            <div> brukes ofte som en beholder
+            for flere HTML-elementer.
+
+            Her bruker vi den til å samle lenkene.
+        -->
+
+        <div class="nav-links">
+
+            <a href="index.html">Forside</a>
+
+            <!--
+                href bestemmer hvilken side lenken åpner.
+
+                index.html = forsiden
+            -->
+
+            <a href="karriere.html">Livet og karrieren</a>
+
+            <a href="filmer.html">Filmer</a>
+
+            <a href="galleri.html">Bilde</a>
+
+        </div>
+
+    </nav>
+
+
+    <!--
+        ============================
+        HOVEDINNHOLD
+        ============================
+    -->
+
+    <main>
+
+
+        <!--
+            HERO-SEKSJON
+
+            En hero-seksjon er ofte det store området
+            øverst på en nettside.
+        -->
+
+        <section class="hero">
+
+
+            <div class="hero-text">
+
+                <h1>Ryan Gosling</h1>
+
+                <p>
+                    Skuespiller, musiker og produsent.
+                </p>
+
+                <!--
+                    Denne knappen er egentlig en <button>.
+
+                    Senere bruker vi JavaScript til å gjøre
+                    noe når brukeren trykker på knappen.
+                -->
+
+                <button onclick="visMelding()">
+                    Klikk her
+                </button>
+
+            </div>
+
+
+            <!--
+                <img> brukes til å vise et bilde.
+
+                src = hvor bildet ligger
+
+                alt = tekst som beskriver bildet.
+
+                Alt-teksten er viktig for tilgjengelighet.
+            -->
+
+            <img
+                src="bilder/ryan1.jpg"
+                alt="Ryan Gosling"
+                class="hero-image"
+            >
+
+        </section>
+
+
+        <!--
+            ============================
+            INTRODUKSJON
+            ============================
+        -->
+
+        <section class="intro">
+
+            <h2>Hvem er Ryan Gosling?</h2>
+
+            <p>
+                Ryan Gosling er en canadisk skuespiller,
+                musiker og produsent. Han er kjent fra
+                en rekke filmer og har hatt en lang
+                karriere innen film.
+            </p>
+
+            <p>
+                Han har spilt både dramatiske roller,
+                romantiske roller og roller i action- og
+                komediefilmer.
+            </p>
+
+        </section>
+
+
+        <!--
+            ============================
+            INFORMASJONSBOKSER
+            ============================
+
+            Her lager vi flere "kort".
+
+            Kortene ligger inni en container.
+
+            CSS bestemmer senere hvordan kortene
+            skal plasseres på siden.
+        -->
+
+        <section>
+
+            <h2 class="section-title">
+                Kort om Ryan Gosling
+            </h2>
+
+
+            <div class="cards">
+
+
+                <!--
+                    FØRSTE KORT
+                -->
+
+                <div class="card">
+
+                    <h3>Født</h3>
+
+                    <p>
+                        Ryan Gosling ble født
+                        12. november 1980.
+                    </p>
+
+                </div>
+
+
+                <!--
+                    ANDRE KORT
+                -->
+
+                <div class="card">
+
+                    <h3>Fødested</h3>
+
+                    <p>
+                        London, Ontario,
+                        Canada.
+                    </p>
+
+                </div>
+
+
+                <!--
+                    TREDJE KORT
+                -->
+
+                <div class="card">
+
+                    <h3>Yrke</h3>
+
+                    <p>
+                        Skuespiller, musiker
+                        og produsent.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!--
+        ============================
+        FOOTER
+        ============================
+
+        Footer ligger vanligvis nederst på nettsiden.
+
+        Her kan vi for eksempel skrive copyright
+        eller navnet på personen som laget nettsiden.
+    -->
+
+    <footer>
+
+        <p>
+            Nettside om Ryan Gosling
+        </p>
+
+    </footer>
+
+
+    <!--
+        ============================
+        JAVASCRIPT
+        ============================
+
+        Her kobler vi inn JavaScript-filen.
+
+        HTML = struktur
+        CSS = utseende
+        JavaScript = funksjonalitet
+    -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
