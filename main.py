@@ -8,7 +8,7 @@ st.sidebar.header("Navigation")
 st.sidebar.info("Use the menu above to navigate between the pages.")
 
 st.markdown("""
-### Welcome to Project Part 1
+### Welcome to Project Part 2
 This is a Streamlit application visualizing reservoir storage levels and TWh capacity for Norwegian water reservoirs.
 
 * **Page 1 (Home):** Project Overview
