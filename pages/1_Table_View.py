@@ -1,43 +1,62 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Table View", layout="wide")
-st.title("Data Summary & Line Charts")
+# 1. Mappe tekniske kolonnenavn til forståelige, norske navn
+COLUMN_NAME_MAP = {
+    "fyllingsgrad": "Fyllingsgrad",
+    "kapasitet_TWh": "Kapasitet (TWh)",
+    "fylling_TWh": "Magasininnhold (TWh)",
+    "fyllingsgrad_forrige_uke": "Fyllingsgrad (forrige uke)",
+    "endring_fyllingsgrad": "Endring i fyllingsgrad"
+}
 
-@st.cache_data
-def load_data():
-    df = pd.read_csv("data/reservoirs.csv")
-    df['dato_Id'] = pd.to_datetime(df['dato_Id'])
-    df = df.sort_values('dato_Id').reset_index(drop=True)
-    return df
+# 2. Filtrer ut uinteressante/tekniske kolonner (omrnr, iso_aar, iso_uke)
+data_columns = [col for col in df.columns if col in COLUMN_NAME_MAP]
 
-df = load_data()
+# 3. Forbered data for tabellen (1 rad per variabel)
+summary_data = []
 
-# Extract the first month in the dataset
-first_month = df['dato_Id'].dt.to_period('M').iloc[0]
-df_first_month = df[df['dato_Id'].dt.to_period('M') == first_month]
+# Finn første måned med data (f.eks. de første 4-5 ukene)
+first_month_df = df.iloc[:5]  # eller filtrer på dato
 
-# Build a summary where each column from the CSV becomes a row in the table
-summary_rows = []
-for col in df.columns:
-    if pd.api.types.is_numeric_dtype(df[col]):
-        summary_rows.append({
-            "Column Name": col,
-            "First Month Trend": df_first_month[col].tolist(),
-            "Min Value": df[col].min(),
-            "Max Value": df[col].max(),
-            "Mean Value": df[col].mean()
-        })
+for col in data_columns:
+    summary_data.append({
+        "Metric": COLUMN_NAME_MAP[col],
+        "First Month Trend": first_month_df[col].tolist(),  # Liste med verdier for LineChart
+        "Min Value": df[col].min(),
+        "Max Value": df[col].max(),
+        "Mean Value": df[col].mean()
+    })
 
-summary_df = pd.DataFrame(summary_rows)
+summary_df = pd.DataFrame(summary_data)
 
-# Display the table with LineChartColumn
+# 4. Vis tabellen i Streamlit med st.column_config
+st.subheader("Vannkraft & Magasinindikatorer")
+
 st.dataframe(
     summary_df,
     column_config={
-        "First Month Trend": st.column_config.LineChartColumn(
-            "First Month Trend",
+        "Metric": st.column_config.TextColumn(
+            "Indikator / Variabel",
+            help="Navnet på vannkraftindikatoren",
             width="medium"
+        ),
+        "First Month Trend": st.column_config.LineChartColumn(
+            "Trend (Første måned)",
+            help="Utvikling gjennom den første måneden",
+            width="medium"
+        ),
+        "Min Value": st.column_config.NumberColumn(
+            "Minimumsverdi",
+            format="%.4f"
+        ),
+        "Max Value": st.column_config.NumberColumn(
+            "Maksimumsverdi",
+            format="%.4f"
+        ),
+        "Mean Value": st.column_config.NumberColumn(
+            "Gjennomsnitt",
+            format="%.4f"
         ),
     },
     hide_index=True,
