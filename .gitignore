@@ -1,5 +1,7 @@
 # Don't sync folder No_sync
 No_sync/
+.streamlit/secrets.toml
+
 
 # Ignore Mac files
 .DS_Store
@@ -15,3 +17,5 @@ D2Dbook/_build
 
 # MyST build outputs
 _build
+
+
