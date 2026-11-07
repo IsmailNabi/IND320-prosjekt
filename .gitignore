@@ -19,3 +19,5 @@ D2Dbook/_build
 _build
 
 
+.venv.nosync/
+.venv
