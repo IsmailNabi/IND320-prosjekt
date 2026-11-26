@@ -37,4 +37,6 @@ dependencies = [
     "pymongo",
     "streamlit",
     "geopandas>=1.2.0",
+    "folium>=1.0.0",
+    "streamlit-folium>=0.28.0",
 ]
