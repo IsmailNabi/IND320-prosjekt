@@ -1,0 +1,8 @@
+# App theme (part 4). The same colours are used by the Plotly template in modules/theme.py.
+[theme]
+base = "light"
+primaryColor = "#0072B2"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#EEF3F6"
+textColor = "#1B2A34"
+font = "sans serif"

@@ -1,13 +1,14 @@
-"""Page 3: ENTSO-E cross-border flows read from MongoDB (two columns)."""
+"""Markets: ENTSO-E cross-border flows read from MongoDB (two columns, Plotly in part 4)."""
 import calendar
 
-import matplotlib.pyplot as plt
 import streamlit as st
 
 from modules.analysis import flows_for_year, monthly_series
 from modules.data_loader import load_flows
+from modules.plots import flows_lines, flows_pie
+from modules.theme import page_header
 
-st.title("Cross-border power flows")
+page_header("Cross-border power flows", "Markets")
 
 try:
     flows = load_flows()
@@ -27,10 +28,7 @@ with left:
     year = st.selectbox("Year", years, index=len(years) - 1)
     rows = flows_for_year(flows, connection, year)
     totals = rows.groupby("direction")["total_mwh"].sum() / 1000  # MWh -> GWh
-    fig, ax = plt.subplots()
-    ax.pie(totals, labels=totals.index, autopct="%1.1f%%", startangle=90)
-    ax.set_title(f"{connection}, {year}: export vs import (GWh)")
-    st.pyplot(fig)
+    st.plotly_chart(flows_pie(totals, f"{connection}, {year}: export vs import (GWh)"), width="stretch")
 
 with right:
     st.subheader("Hourly flow per direction")
@@ -43,16 +41,7 @@ with right:
     if series.empty:
         st.info("Select at least one month.")
     else:
-        fig, ax = plt.subplots()
-        for direction, grp in series.groupby("direction"):
-            ax.plot(grp["ts"], grp["mw"], label=direction)
-        ax.set_xlabel("Time (UTC)")
-        ax.set_ylabel("Flow (MW)")
-        ax.set_title(f"{connection}, {year}")
-        ax.legend()
-        ax.grid(True, linestyle="--", alpha=0.5)
-        fig.autofmt_xdate()
-        st.pyplot(fig)
+        st.plotly_chart(flows_lines(series, f"{connection}, {year}"), width="stretch")
 
 with st.expander("Data source"):
     st.markdown(

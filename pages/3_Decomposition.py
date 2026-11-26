@@ -1,17 +1,17 @@
-"""Page 5 (part 3): STL decomposition and spectrogram of the filling degree.
+"""Anomalies: STL decomposition and spectrogram of the filling degree (part 3, Plotly in part 4).
 
 Area: GLOBAL sidebar selector. Year interval and method parameters: LOCAL,
 because they only apply to this page. Plot functions are shared with the
 notebook (modules/decomposition.py).
 """
-import matplotlib.pyplot as plt
 import streamlit as st
 
 from modules.data_loader import load_reservoirs
 from modules.decomposition import filling_series, spectrogram_plot, stl_plot
 from modules.selectors import selected_area
+from modules.theme import page_header
 
-st.title("Filling degree: STL and spectrogram")
+page_header("Filling degree: STL and spectrogram", "Anomalies")
 df = load_reservoirs()
 
 area_type, area_number, _ = selected_area()
@@ -34,8 +34,7 @@ with tab_stl:
                       help="Must be longer than the period (52). Larger = smoother trend.")
     robust = c3.toggle("Robust fit", value=False, help="Down-weights unusual weeks, e.g. very dry years.")
     fig = stl_plot(series, seasonal=seasonal, trend=trend, robust=robust, title=f"filling degree, {area_name}")
-    st.pyplot(fig)
-    plt.close(fig)
+    st.plotly_chart(fig, width="stretch")
     st.markdown("**Reading the plot:** *Trend* = slow multi-year change, *Seasonal* = the yearly "
                 "fill-and-drain cycle (period 52 weeks), *Residual* = what is left, e.g. wet or dry weeks.")
 
@@ -47,8 +46,7 @@ with tab_spec:
                         help="Weeks shared by neighbouring windows.")
     max_f = c3.slider("Max frequency (cycles/year)", 2, 26, 6)
     fig = spectrogram_plot(series, window, overlap, max_f, title=f"filling degree, {area_name}")
-    st.pyplot(fig)
-    plt.close(fig)
+    st.plotly_chart(fig, width="stretch")
     st.markdown("**Reading the plot:** the bright band at **1 cycle per year** is the yearly cycle. "
                 "Energy at 2-3 cycles per year shows that the yearly curve is not a pure sine.")
 
