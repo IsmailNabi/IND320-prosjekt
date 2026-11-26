@@ -2,7 +2,7 @@
 
 The Magasinstatistikk data are weekly, so one year = 52 observations.
 """
-import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
 import numpy as np
 import pandas as pd
 from scipy.signal import spectrogram
@@ -45,19 +45,18 @@ def stl_plot(series: pd.Series, period: int = WEEKS_PER_YEAR, seasonal: int = 13
     trend = max(trend + (trend % 2 == 0), period + 1 + (period % 2))
     res = STL(series, period=period, seasonal=seasonal, trend=trend, robust=robust).fit()
 
-    fig, axes = plt.subplots(4, 1, figsize=(12, 9), sharex=True)
     parts = [("Observed", res.observed), ("Trend", res.trend), ("Seasonal", res.seasonal), ("Residual", res.resid)]
-    for ax, (name, values) in zip(axes, parts):
+    fig = make_subplots(rows=4, cols=1, shared_xaxes=True, vertical_spacing=0.05,
+                        subplot_titles=[name for name, _ in parts])
+    for row, (name, values) in enumerate(parts, start=1):
         if name == "Residual":
-            ax.scatter(values.index, values, s=4)
-            ax.axhline(0, color="black", lw=0.8)
+            fig.add_scatter(x=values.index, y=values, mode="markers", marker=dict(size=3), name=name, row=row, col=1)
+            fig.add_hline(y=0, line=dict(color="black", width=1), row=row, col=1)
         else:
-            ax.plot(values.index, values, lw=1)
-        ax.set_ylabel(name)
-        ax.grid(True, ls="--", alpha=0.5)
-    axes[0].set_title(f"STL of {title} (period {period}, seasonal {seasonal}, trend {trend}, robust {robust})")
-    axes[-1].set_xlabel("Date")
-    fig.tight_layout()
+            fig.add_scatter(x=values.index, y=values, name=name, line=dict(width=1.5), row=row, col=1)
+    fig.update_layout(title=f"STL of {title} (period {period}, seasonal {seasonal}, trend {trend}, robust {robust})",
+                      height=820, showlegend=False, hovermode="x")
+    fig.update_xaxes(title_text="Date", row=4, col=1)
     return fig
 
 
@@ -80,15 +79,14 @@ def spectrogram_plot(series: pd.Series, window_length: int = 104, window_overlap
                               noverlap=window_overlap, detrend="linear", scaling="density")
     centres = series.index[0] + pd.to_timedelta(t * 365.25, unit="D")   # window centres as dates
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 7), sharex=True, height_ratios=[1, 2])
-    ax1.plot(series.index, series.values, lw=1)
-    ax1.set_ylabel(title)
-    ax1.grid(True, ls="--", alpha=0.5)
-    ax1.set_title(f"Spectrogram of {title} (window {window_length} weeks, overlap {window_overlap} weeks)")
-
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, row_heights=[0.35, 0.65], vertical_spacing=0.06)
+    fig.add_scatter(x=series.index, y=series.values, name=title, line=dict(width=1.5), row=1, col=1)
     keep = f <= max_frequency
-    mesh = ax2.pcolormesh(centres, f[keep], 10 * np.log10(power[keep] + 1e-12), shading="nearest", cmap="viridis")
-    ax2.set_ylabel("Frequency (cycles per year)")
-    ax2.set_xlabel("Date (window centre)")
-    fig.colorbar(mesh, ax=[ax1, ax2], label="Power (dB)", pad=0.01)
+    fig.add_heatmap(x=centres, y=f[keep], z=10 * np.log10(power[keep] + 1e-12), colorscale="Viridis",
+                    colorbar=dict(title="Power (dB)", len=0.65, y=0, yanchor="bottom"), row=2, col=1)
+    fig.update_yaxes(title_text=title, row=1, col=1)
+    fig.update_yaxes(title_text="Frequency (cycles per year)", row=2, col=1)
+    fig.update_xaxes(title_text="Date (window centre)", row=2, col=1)
+    fig.update_layout(title=f"Spectrogram of {title} (window {window_length} weeks, overlap {window_overlap} weeks)",
+                      height=620, showlegend=False, hovermode="closest")
     return fig

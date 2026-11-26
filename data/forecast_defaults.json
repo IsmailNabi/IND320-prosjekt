@@ -1,0 +1,16 @@
+{
+  "model": "snarimax",
+  "history_years": 6,
+  "horizon": 26,
+  "exog": [],
+  "p": 2,
+  "d": 0,
+  "q": 0,
+  "sp": 1,
+  "sd": 1,
+  "sq": 0,
+  "m": 52,
+  "n_lags": 4,
+  "lr": 0.01,
+  "epochs": 3
+}

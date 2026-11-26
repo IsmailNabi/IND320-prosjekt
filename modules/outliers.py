@@ -3,17 +3,17 @@
 * spc_outliers : DCT high-pass filter + Statistical Process Control (robust statistics)
 * lof_anomalies: Local Outlier Factor (scikit-learn)
 
-Both functions return (figure, statistics, table of outliers) so the same code
+Both functions return (Plotly figure, statistics, table of outliers) so the same code
 is used in the notebook and on the Streamlit page.
 """
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 from scipy.fft import dct, idct
 from scipy.stats import median_abs_deviation
 from sklearn.neighbors import LocalOutlierFactor
 
-OUTLIER_COLOUR = "#d62728"   # red, contrasts with the default blue line
+from modules.theme import ACCENT as OUTLIER_COLOUR   # amber, contrasts with the teal line
 
 
 def _step_hours(index: pd.DatetimeIndex) -> float:
@@ -63,18 +63,16 @@ def spc_outliers(series: pd.Series, cutoff_days: float = 30, n_std: float = 3.0,
     lower = low + centre - n_std * sigma
     is_out = np.abs(satv - centre) > n_std * sigma
 
-    fig, ax = plt.subplots(figsize=(12, 4.5))
-    ax.plot(s.index, s.values, lw=0.7, label=title)
-    ax.plot(s.index, upper, color="black", lw=1, ls="--", label=f"SPC limits (±{n_std:g} robust SD)")
-    ax.plot(s.index, lower, color="black", lw=1, ls="--")
-    ax.scatter(s.index[is_out], s.values[is_out], s=12, color=OUTLIER_COLOUR, zorder=3,
-               label=f"Outliers ({is_out.sum()})")
-    ax.set_title(f"{title}: SPC on DCT high-pass values (cut-off {cutoff_days:g} days)")
-    ax.set_xlabel("Time (UTC)")
-    ax.set_ylabel(title)
-    ax.grid(True, ls="--", alpha=0.5)
-    ax.legend(loc="upper right")
-    fig.tight_layout()
+    fig = go.Figure()
+    fig.add_scatter(x=s.index, y=s.values, name=title, line=dict(width=1))
+    fig.add_scatter(x=s.index, y=upper, name=f"SPC limits (±{n_std:g} robust SD)",
+                    line=dict(color="black", width=1, dash="dash"))
+    fig.add_scatter(x=s.index, y=lower, name="lower limit", showlegend=False,
+                    line=dict(color="black", width=1, dash="dash"))
+    fig.add_scatter(x=s.index[is_out], y=s.values[is_out], mode="markers", name=f"Outliers ({is_out.sum()})",
+                    marker=dict(color=OUTLIER_COLOUR, size=6))
+    fig.update_layout(title=f"{title}: SPC on DCT high-pass values (cut-off {cutoff_days:g} days)",
+                      xaxis_title="Time (UTC)", yaxis_title=title, height=430)
 
     outliers = pd.DataFrame({
         "time": s.index[is_out], "value": s.values[is_out],
@@ -117,16 +115,12 @@ def lof_anomalies(series: pd.Series, contamination: float = 0.01, n_neighbors: i
     score = -lof.negative_outlier_factor_       # LOF value: about 1 = normal, larger = more outlying
     is_out = labels == -1
 
-    fig, ax = plt.subplots(figsize=(12, 4.5))
-    ax.plot(s.index, s.values, lw=0.7, label=title)
-    ax.scatter(s.index[is_out], s.values[is_out], s=14, color=OUTLIER_COLOUR, zorder=3,
-               label=f"LOF anomalies ({is_out.sum()})")
-    ax.set_title(f"{title}: Local Outlier Factor (proportion {contamination:.1%}, {n_neighbors} neighbours)")
-    ax.set_xlabel("Time (UTC)")
-    ax.set_ylabel(title)
-    ax.grid(True, ls="--", alpha=0.5)
-    ax.legend(loc="upper right")
-    fig.tight_layout()
+    fig = go.Figure()
+    fig.add_scatter(x=s.index, y=s.values, name=title, line=dict(width=1))
+    fig.add_scatter(x=s.index[is_out], y=s.values[is_out], mode="markers", name=f"LOF anomalies ({is_out.sum()})",
+                    marker=dict(color=OUTLIER_COLOUR, size=7))
+    fig.update_layout(title=f"{title}: Local Outlier Factor (proportion {contamination:.1%}, {n_neighbors} neighbours)",
+                      xaxis_title="Time (UTC)", yaxis_title=title, height=430)
 
     anomalies = (pd.DataFrame({"time": s.index[is_out], "value": s.values[is_out], "lof_score": score[is_out]})
                  .sort_values("lof_score", ascending=False).reset_index(drop=True))
