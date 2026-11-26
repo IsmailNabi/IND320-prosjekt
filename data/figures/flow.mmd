@@ -1,0 +1,30 @@
+flowchart LR
+    subgraph S[Data sources]
+        NVE[(NVE API<br/>weekly reservoirs)]
+        OM[(open-meteo API<br/>hourly ERA5)]
+        NB[(Norges Bank API<br/>daily EUR/USD)]
+    end
+    subgraph C[Storage & cache]
+        MDB[(MongoDB<br/>sampled points ·<br/>weather per area & year ·<br/>ENTSO-E flows)]
+        CACHE[st.cache_data<br/>ttl 6-24 h]
+    end
+    subgraph U[User choices · session state]
+        AREA{{AREA<br/>sidebar or map click}}
+        TIME{{TIME FRAME<br/>map slider}}
+    end
+    subgraph P[Pages]
+        EXP[Explore]
+        ANO[Anomalies]
+        PRE[Prediction]
+        MAR[Markets]
+    end
+    OM -- first time only --> MDB
+    NVE --> CACHE
+    NB --> CACHE
+    MDB --> CACHE
+    CACHE --> P
+    AREA --> P
+    TIME --> P
+    EXP -- click / slider --> U
+    classDef st fill:#FFFFFF,stroke:#D55E00,stroke-width:2px,color:#1B2A34
+    class AREA,TIME st

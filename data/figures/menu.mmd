@@ -1,0 +1,18 @@
+flowchart TB
+    HOME["🏠 Home<br/>one card per group"]
+    HOME --> EX["EXPLORE<br/>Map & time frame<br/>Reservoir overview (table + plots)"]
+    HOME --> AN["ANOMALIES<br/>STL & spectrogram<br/>Weather outliers (SATV/SPC, LOF)"]
+    HOME --> PR["PREDICTION<br/>Weather vs reservoir (SWC)<br/>Forecast (SNARIMAX / lag ML)"]
+    HOME --> MK["MARKETS<br/>Cross-border flows<br/>Exchange rates"]
+    HOME --> AB["About"]
+    SB["Sidebar on every page:<br/>menu + AREA selector + current TIME FRAME"]
+    classDef ex fill:#D6EAF5,stroke:#0072B2,stroke-width:2px,color:#1B2A34
+    classDef an fill:#FBEBCF,stroke:#E69F00,stroke-width:2px,color:#1B2A34
+    classDef pr fill:#F5E1EC,stroke:#CC79A7,stroke-width:2px,color:#1B2A34
+    classDef mk fill:#D3EFE5,stroke:#009E73,stroke-width:2px,color:#1B2A34
+    classDef gr fill:#F4F6F8,stroke:#6B7B86,color:#1B2A34
+    class EX ex
+    class AN an
+    class PR pr
+    class MK mk
+    class AB,HOME,SB gr
